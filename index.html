@@ -1,12 +1,705 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>portfolio</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aswathy Kumar — AI/ML Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0b0e13;
+      --surface: #111520;
+      --border: #1e2535;
+      --accent: #5af0b0;
+      --accent2: #3b82f6;
+      --text: #e8edf5;
+      --muted: #7a8499;
+      --tag-bg: #141b2b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* ── GRID LINES ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(90,240,176,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(90,240,176,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 4rem;
+      background: rgba(11,14,19,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 4rem 4rem;
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-label::before {
+      content: '// ';
+      opacity: 0.5;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border-radius: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0b0e13;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: #7fffc7;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(90,240,176,0.2);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* ── GLOW ORBS ── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: rgba(90,240,176,0.06);
+      top: 10%; right: -100px;
+    }
+
+    .orb-2 {
+      width: 350px; height: 350px;
+      background: rgba(59,130,246,0.07);
+      bottom: 20%; left: -80px;
+    }
+
+    /* ── SECTION ── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 4rem;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-label::before { content: '// '; opacity: 0.5; }
+
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      line-height: 1.1;
+      margin-bottom: 3rem;
+      letter-spacing: -0.01em;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── SKILLS GRID ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .skill-card:hover {
+      border-color: rgba(90,240,176,0.3);
+      transform: translateY(-3px);
+    }
+
+    .skill-card h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 3px;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3.5rem;
+      padding-left: 1.5rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.4rem;
+      top: 0.5rem;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px rgba(90,240,176,0.5);
+    }
+
+    .timeline-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: baseline;
+      margin-bottom: 0.4rem;
+    }
+
+    .timeline-company {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+
+    .timeline-role {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .timeline-date {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .timeline-location {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .timeline-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .timeline-bullets li {
+      font-size: 0.92rem;
+      color: var(--muted);
+      padding-left: 1.2rem;
+      position: relative;
+    }
+
+    .timeline-bullets li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      opacity: 0.6;
+    }
+
+    .timeline-bullets strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── PROJECT CARDS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+
+    .project-card:hover {
+      border-color: rgba(90,240,176,0.25);
+      transform: translateY(-4px);
+    }
+
+    .project-card:hover::before { transform: scaleX(1); }
+
+    .project-card h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .project-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .project-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      text-align: center;
+    }
+
+    #contact p {
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── FADE-IN ANIMATION ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.7s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.25s; }
+    .fade-in:nth-child(3) { animation-delay: 0.4s; }
+    .fade-in:nth-child(4) { animation-delay: 0.55s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+      section, #hero { padding: 4rem 1.5rem; }
+      .timeline-date { margin-left: 0; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Welcome to My Website!</h1>
-    <p>This website is hosted for free on GitHub Pages.</p>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">Aswathy Kumar</a>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div id="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <p class="hero-label fade-in">AI / ML Engineer &amp; Data Professional</p>
+    <h1 class="fade-in">Aswathy<br/><em>Kumar</em></h1>
+    <p class="hero-sub fade-in">
+      8+ years building scalable data pipelines, ETL frameworks, and analytics platforms —
+      with hands-on research in LLM quantization, pruning, and inference optimization.
+    </p>
+    <div class="hero-links fade-in">
+      <a class="btn btn-primary" href="mailto:aswathysekh@gmail.com">Get in touch</a>
+      <a class="btn btn-outline" href="https://www.linkedin.com/in/aswathy-kumar" target="_blank">LinkedIn ↗</a>
+      <a class="btn btn-outline" href="#projects">View Projects</a>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="section-label">Expertise</p>
+    <h2>Technical Skills</h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <h3>AI / ML</h3>
+        <div class="tags">
+          <span class="tag">LLM Quantization</span>
+          <span class="tag">GPTQ / AWQ</span>
+          <span class="tag">Model Pruning</span>
+          <span class="tag">SparseGPT</span>
+          <span class="tag">PyTorch</span>
+          <span class="tag">Hugging Face</span>
+          <span class="tag">TensorFlow</span>
+          <span class="tag">Scikit-learn</span>
+          <span class="tag">Triton Kernels</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Languages</h3>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">SQL</span>
+          <span class="tag">PySpark</span>
+          <span class="tag">C</span>
+          <span class="tag">MATLAB</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Data &amp; ETL</h3>
+        <div class="tags">
+          <span class="tag">Snowflake</span>
+          <span class="tag">dbt Cloud</span>
+          <span class="tag">Apache Airflow</span>
+          <span class="tag">Apache Kafka</span>
+          <span class="tag">Apache Flink</span>
+          <span class="tag">AWS Glue</span>
+          <span class="tag">Databricks</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Cloud &amp; DevOps</h3>
+        <div class="tags">
+          <span class="tag">AWS</span>
+          <span class="tag">GCP</span>
+          <span class="tag">Docker</span>
+          <span class="tag">Kubernetes</span>
+          <span class="tag">Jenkins</span>
+          <span class="tag">Git / GitLab</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>BI &amp; Visualization</h3>
+        <div class="tags">
+          <span class="tag">Tableau</span>
+          <span class="tag">Power BI</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h3>Collaboration</h3>
+        <div class="tags">
+          <span class="tag">JIRA</span>
+          <span class="tag">Confluence</span>
+          <span class="tag">Scrum / Agile</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label">Independent Research</p>
+    <h2>AI / ML Projects</h2>
+    <div class="projects-grid">
+      <div class="project-card">
+        <p class="project-year">2024</p>
+        <h3>LLM Quantization Benchmark</h3>
+        <p class="project-desc">
+          Benchmarked INT8 and INT4 W4A16 quantization on TinyLlama-1.1B, achieving
+          <strong style="color:var(--text)">2.88× model compression</strong> at &lt;1.2 perplexity degradation on WikiText-2.
+          Results match published GPTQ/AWQ benchmarks.
+        </p>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">PyTorch</span>
+          <span class="tag">Hugging Face</span>
+          <span class="tag">llm-compressor</span>
+          <span class="tag">bitsandbytes</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <p class="project-year">2024</p>
+        <h3>LLM Pruning &amp; Sparsity Benchmark</h3>
+        <p class="project-desc">
+          Applied SparseGPT structured pruning to Llama-3.2-1B sweeping 0–75% sparsity,
+          combined with INT8 quantization for cumulative compression. Validated against
+          NVIDIA 2:4 sparse Tensor Core format. Open-sourced with reproducible Colab notebook.
+        </p>
+        <div class="tags">
+          <span class="tag">SparseGPT</span>
+          <span class="tag">lm-evaluation-harness</span>
+          <span class="tag">Python</span>
+          <span class="tag">NVIDIA 2:4</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <p class="section-label">Career</p>
+    <h2>Experience</h2>
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-meta">
+          <span class="timeline-company">Samsung Electronics America</span>
+          <span class="timeline-role">Engineer – Data &amp; Analytics</span>
+          <span class="timeline-date">Nov 2021 – Jul 2024</span>
+        </div>
+        <p class="timeline-location">Plano, TX</p>
+        <ul class="timeline-bullets">
+          <li>Deployed AI-driven 5G network performance analytics platform using <strong>AWS SageMaker, Redshift, S3</strong>, reducing issue resolution time by ~25%</li>
+          <li>Engineered scalable ETL pipelines ingesting <strong>5TB+/day</strong> of user data, reducing manual intervention by 65%</li>
+          <li>Led <strong>dbt Cloud</strong> CI/CD pipeline for automated model testing, schema validation, and docs — cutting release errors by 40%</li>
+          <li>Spearheaded on-premises to <strong>Databricks on AWS</strong> migration across 200+ KPIs with minimal downtime</li>
+          <li>Engineered real-time monitoring dashboard via <strong>Apache Flink &amp; Spark Streaming</strong>, cutting resolution times by 57%</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-meta">
+          <span class="timeline-company">Worldlink</span>
+          <span class="timeline-role">Performance Assurance Engineer</span>
+          <span class="timeline-date">May 2020 – Nov 2021</span>
+        </div>
+        <p class="timeline-location">Plano, TX</p>
+        <ul class="timeline-bullets">
+          <li>Analyzed <strong>10TB+ of LTE/5G call detail records</strong> using SQL, PySpark, and BigQuery — reducing call drops by 8%</li>
+          <li>Built anomaly detection tool using clustering algorithms, achieving <strong>40% reduction</strong> in mean time to detect degraded KPIs</li>
+          <li>Conducted hypothesis testing on 5G features reducing release cycle time by 30%</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-meta">
+          <span class="timeline-company">Ericsson</span>
+          <span class="timeline-role">Engineer</span>
+          <span class="timeline-date">Jun 2014 – Aug 2018</span>
+        </div>
+        <p class="timeline-location">Bengaluru, India</p>
+        <ul class="timeline-bullets">
+          <li>Built <strong>Outage Severity Predictor</strong> using KPI-based clustering to predict network fault severity</li>
+          <li>Designed data models for 5G KPIs post-migration, increasing analysis accuracy by 15%</li>
+          <li>Standardized 4G/5G node ID formats across ETL sources, reducing format errors by 40%</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <hr class="divider"/>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <p class="section-label">Let's Talk</p>
+    <h2>Contact</h2>
+    <p>Open to AI/ML and data engineering roles. Feel free to reach out via email or connect on LinkedIn.</p>
+    <div class="contact-links">
+      <a class="btn btn-primary" href="mailto:aswathysekh@gmail.com">aswathysekh@gmail.com</a>
+      <a class="btn btn-outline" href="https://www.linkedin.com/in/aswathy-kumar" target="_blank">LinkedIn ↗</a>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Aswathy Kumar &nbsp;·&nbsp; Built with GitHub Pages</p>
+  </footer>
+
 </body>
 </html>
